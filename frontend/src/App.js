@@ -1,25 +1,34 @@
 import logo from './logo.svg';
 import './App.css';
+import {incrementCounterAction} from "./redux/actions";
+import {connect} from "react-redux";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const mapState = (state) => ({
+    count: state.count
+})
+
+const mapDispatch = {
+    incrementCounterAction
 }
+
+
+const App = connect(mapState, mapDispatch)(
+    (props) => {
+        const {
+            count,
+            incrementCounterAction
+        } = props;
+
+        return (
+            <div className="App">
+                <header className="App-header">
+                    <div>
+                        count: {count}
+                    </div>
+                    <button onClick={() => incrementCounterAction(1)}>Increment</button>
+                </header>
+            </div>
+        );
+    });
 
 export default App;
