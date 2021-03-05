@@ -19,6 +19,7 @@ const HeaderInnerWrapper = styled.div`
     width: 100%;
     margin-top: 24px;
     margin-bottom: 16px;
+
 `;
 
 const HeaderTitle = styled.h2`
@@ -48,23 +49,29 @@ const LiveIndicator = styled.div`
 
 const Header = () => {
     return (
-        <HeaderWrapper>
-            <HeaderImage src={'./header.png'}/>
-            <HeaderInnerWrapper>
-                <div style={{ display: 'flex', alignItems: 'start' }}>
-                    <HeaderTitle>
-                        What's it like to work at Facebook?
-                    </HeaderTitle>
-                    <LiveIndicator>
-                        LIVE
-                    </LiveIndicator>
-                </div>
+        <div style={{
+            boxShadow: '0px 2px 5px rgba(0,0,0,0.05)',
+            width: '100%',
+            backgroundColor: 'white'
+        }}>
+            <HeaderWrapper>
+                <HeaderImage src={'./header.png'}/>
+                <HeaderInnerWrapper>
+                    <div style={{display: 'flex', alignItems: 'start'}}>
+                        <HeaderTitle>
+                            What's it like to work at Facebook?
+                        </HeaderTitle>
+                        <LiveIndicator>
+                            LIVE
+                        </LiveIndicator>
+                    </div>
 
-                <HeaderSubtitle>
-                    Audio Session • Free
-                </HeaderSubtitle>
-            </HeaderInnerWrapper>
-        </HeaderWrapper>
+                    <HeaderSubtitle>
+                        Audio Session • Free
+                    </HeaderSubtitle>
+                </HeaderInnerWrapper>
+            </HeaderWrapper>
+        </div>
     )
 }
 
