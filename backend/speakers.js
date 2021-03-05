@@ -28,5 +28,9 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('listSpeakers', Array.from(activeSpeakers));
     console.log(activeSpeakers);
   });
+  socket.on('disconnect', () => {
+    socket.emit('listSpeakers', Array.from(activeSpeakers));
+    socket.broadcast.emit('listSpeakers', Array.from(activeSpeakers));
+  })
 });
 

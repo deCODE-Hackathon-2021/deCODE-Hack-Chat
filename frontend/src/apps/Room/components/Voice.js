@@ -1,8 +1,8 @@
-import React , {useEffect, useState, useContext, useCallback} from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { connect as reduxConnect } from 'react-redux';
-import {SocketContext} from '../../../socketio';
+import { SocketContext } from '../../../socketio';
 
 import Box from 'common/Box';
 import { connect } from 'twilio-video';
@@ -13,7 +13,12 @@ const Wrapper = styled.div`
     height: 100%;
 `;
 
-const Listener = styled.div`
+const ParticipantWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
+
+const Listener = styled.img`
     background-color: grey;
     width: 24px;
     height: 24px;
@@ -21,16 +26,24 @@ const Listener = styled.div`
     ${props => props.isSpeaking && `border: 3px solid #68BA6C;`}
 `;
 
+const SelfImage = styled.img`
+    border-radius: 32px;
+    height: 28px;
+    width: 28px;
+    margin-right: 8px;
+`;
+
 const mapState = state => {
     return {
-        identity: state.chat.userData.id
+        identity: state.chat.userData.id,
+        members: state.chat.members
     };
 };
 
 const mapDispatch = {};
 
 const Voice = reduxConnect(mapState, mapDispatch)(props => {
-    const { identity } = props;
+    const { identity, members } = props;
 
     const [speakers, setSpeakers] = useState([]);
     const [listeners, setListeners] = useState([]);
@@ -38,25 +51,39 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
     const socket = useContext(SocketContext);
 
     const handleJoinSpeakers = useCallback(() => {
-        socket.emit("addSpeaker", identity);
+        socket.emit('addSpeaker', identity);
     }, []);
 
     const handleLeaveSpeakers = useCallback(() => {
-        socket.emit("removeSpeaker", identity);
+        socket.emit('removeSpeaker', identity);
     }, []);
 
-
     const [dominantSpeaker, setDominantSpeaker] = useState(null);
-    const [voiceStatus, setVoiceStatus] = useState("Mute");
-    const [speaking, setSpeaking] = useState(false)
+    const [voiceStatus, setVoiceStatus] = useState('Mute');
+    const [speaking, setSpeaking] = useState(false);
     const [room, setRoom] = useState(null);
 
     useEffect(() => {
-        socket.on("listSpeakers", (handleSpeakers) => {
-            console.log(handleSpeakers)
-            setSpeakers(handleSpeakers);
-        });
-    }, [socket]);
+        if (room) {
+            socket.on('listSpeakers', handleSpeakers => {
+                console.log(handleSpeakers);
+                setSpeakers(handleSpeakers);
+                let existingListeners = [];
+                room.participants.forEach(participant => {
+                    console.log(participant.identity);
+                    if (!handleSpeakers.includes(participant.identity)) {
+                        existingListeners.push({ identity: participant.identity });
+                    }
+                });
+
+                if (!handleSpeakers.includes(identity)) {
+                    existingListeners.push({ identity });
+                }
+
+                setListeners(existingListeners);
+            });
+        }
+    }, [socket, room]);
 
     useEffect(() => {
         const fetchToken = async () => {
@@ -83,8 +110,6 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                 existingListeners.push({ identity });
 
                 room.on('participantConnected', participant => {
-                    listeners.push({ identity: participant.identity });
-
                     participant.tracks.forEach(publication => {
                         if (publication.isSubscribed) {
                             const track = publication.track;
@@ -106,9 +131,6 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                 });
                 room.on('participantDisconnected', participant => {
                     if (!participant) return null;
-                    const newSpeakers = speakers.filter(speaker => speaker.identity !== participant.identity);
-                    const newListeners = listeners.filter(listener => listener.identity !== participant.identity);
-                    setListeners(newListeners);
                 });
 
                 // DISPLAY EXISTING LISTENERS
@@ -127,8 +149,8 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                 });
 
                 setListeners(existingListeners);
-                setRoom(room)
-                console.log("ROOM: " + room);
+                setRoom(room);
+                console.log('ROOM: ' + room);
             },
             error => {
                 console.error(`Unable to connect to Room: ${error.message}`);
@@ -137,58 +159,79 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
     };
 
     const renderListeners = () => {
-        return listeners.map(listener => {
-            return <Listener key={listener.identity} isSpeaking={false} />;
-        });
+        return (
+            <ParticipantWrapper>
+                {listeners.map(listener => {
+                    return (
+                        <Listener
+                            key={listener.identity}
+                            isSpeaking={false}
+                            src={members[listener.identity].attributes.picture}
+                        />
+                    );
+                })}
+            </ParticipantWrapper>
+        );
     };
 
     const renderSpeakers = () => {
-        return speakers.map(speaker => {
-            return <Listener key={speaker} isSpeaking={dominantSpeaker === speaker} />;
-        });
+        return (
+            <ParticipantWrapper>
+                {speakers.map(speaker => {
+                    return (
+                        <Listener
+                            key={speaker}
+                            isSpeaking={dominantSpeaker === speaker}
+                            src={members[speaker].attributes.picture}
+                        />
+                    );
+                })}
+            </ParticipantWrapper>
+        );
     };
 
-    const toggleVoice = () => {                                           // Voice toggle event handler
-        if (voiceStatus === "Mute") {
+    const toggleVoice = () => {
+        // Voice toggle event handler
+        if (voiceStatus === 'Mute') {
             room.localParticipant.audioTracks.forEach(audioTrack => {
                 audioTrack.track.enable();
             });
-            setVoiceStatus("Unmute");
+            setVoiceStatus('Unmute');
         } else {
             room.localParticipant.audioTracks.forEach(audioTrack => {
                 audioTrack.track.disable();
             });
-            setVoiceStatus("Mute");
+            setVoiceStatus('Mute');
         }
-    }
+    };
 
     const toggleSpeaker = () => {
         if (speaking) {
             room.localParticipant.audioTracks.forEach(audioTrack => {
                 audioTrack.track.disable();
             });
-            setVoiceStatus("Mute");
+            setVoiceStatus('Mute');
             handleLeaveSpeakers();
         } else {
             room.localParticipant.audioTracks.forEach(audioTrack => {
                 audioTrack.track.enable();
             });
-            setVoiceStatus("Unmute");
+            setVoiceStatus('Unmute');
             handleJoinSpeakers();
         }
-        setSpeaking(!speaking)
-    }
+        setSpeaking(!speaking);
+    };
 
     return (
         <Wrapper>
             <Box title={`${speakers.length} speaker${speakers.length === 1 ? '' : 's'} on stage`} height={60} styles>
-                {speaking && <button onClick={toggleSpeaker}>Leave</button> }
-                {speaking && <button onClick={toggleVoice}>{voiceStatus == "Mute" ? "Unmute" : "Mute"}</button>}
+                {speaking && <button onClick={toggleSpeaker}>Leave</button>}
+                {speaking && <button onClick={toggleVoice}>{voiceStatus == 'Mute' ? 'Unmute' : 'Mute'}</button>}
                 {renderSpeakers()}
             </Box>
             <Box title="Listeners" height={40} styles>
                 {renderListeners()}
-                {!speaking && <button onClick={toggleSpeaker}>Raise Hand</button> }
+                {!speaking && <button onClick={toggleSpeaker}>Raise Hand</button>}
             </Box>
             <div id="remote-media-div" />
         </Wrapper>
