@@ -15,7 +15,6 @@ const Content = styled.div`
     display: flex;
     height: 700px;
     justify-content: center;
-    background-color: #e5e5e5;
     padding: 8px;
 `;
 
