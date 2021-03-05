@@ -49,12 +49,6 @@ const Room = () => {
     return (
         <>
             <SocketContext.Provider value={socket}>
-            <Header>
-                <HeaderInnerWrapper>
-                    <h2>Dealing with anxiety?</h2>
-                    Free - Voice Event
-                </HeaderInnerWrapper>
-            </Header>
             <Content>
                 <ContentInnerWrapper>
                     <VoiceWrapper>
