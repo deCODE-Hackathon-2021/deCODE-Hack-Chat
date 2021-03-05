@@ -10,6 +10,7 @@ import produce from "immer";
 const initialState = {
     members: {},
     messages: [],
+    messagesDict: {},
     userIdentity: undefined,
     userData: {}
 }
@@ -41,7 +42,10 @@ const chatReducer = (state = initialState, action) => {
             const {message} = action.payload;
 
             return produce(state, draft => {
-                draft.messages.unshift(message)
+                if(!draft.messagesDict[message.sid]) {
+                    draft.messages.unshift(message)
+                    draft.messagesDict[message.sid] = true;
+                }
             })
         case ACTION_CHAT_SET_USER_IDENTITY:
             return produce(state, draft => {

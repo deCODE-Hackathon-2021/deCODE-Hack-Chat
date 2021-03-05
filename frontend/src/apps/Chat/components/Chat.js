@@ -124,9 +124,9 @@ const Message = connect(messageMapState)(({message, member, isSelf}) => {
     return (
         <MessageWrapper isSelf={isSelf}>
             <div>
-                <MessageAuthor>
+                {!isSelf && <MessageAuthor>
                     {member?.friendlyName}
-                </MessageAuthor>
+                </MessageAuthor>}
                 <div style={{display: 'flex', alignItems: 'start'}}>
                     {!isSelf && <MessagePicture src={member.attributes.picture}/>}
                     <MessageBubble isSelf={isSelf}>

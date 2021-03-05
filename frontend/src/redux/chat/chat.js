@@ -32,7 +32,6 @@ export const initializeChat = async (store, user) => {
     const chatClient = await Twilio.create(
         token,
     );
-    console.log('initiaized chat client')
     chatHelpers.chatClient = chatClient;
 
     const generalChannel = await chatClient.getChannelByUniqueName('general');
@@ -55,18 +54,9 @@ export const initializeChat = async (store, user) => {
         store.dispatch(chatJoinMember(user))
     });
     chatHelpers.sendMessage = (message) => generalChannel.sendMessage(message);
-
-
+    
     if(generalChannel.status !== 'joined') {
         await generalChannel.join();
-    } else {
-        /*console.log('leaving channel')
-        await generalChannel.leave();
-        await generalChannel.join();*/
     }
-
-    await new Promise((res) => setTimeout(() => res(), 500))
-
-    await generalChannel.sendMessage('Hello')
 }
 
