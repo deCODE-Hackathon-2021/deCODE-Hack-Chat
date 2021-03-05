@@ -1,5 +1,6 @@
-import React from 'react';
+import React , {useEffect, useContext, useCallback} from 'react';
 import styled from 'styled-components';
+import {SocketContext, socket} from '../../../socketio';
 
 import Chat from 'apps/Chat';
 
@@ -15,7 +16,6 @@ const Content = styled.div`
     display: flex;
     height: 700px;
     justify-content: center;
-    background-color: #e5e5e5;
     padding: 8px;
 `;
 
@@ -44,9 +44,12 @@ const MessageWrapper = styled.div`
 `;
 
 const Room = () => {
+
+
     return (
         <>
-            <Header/>
+            <SocketContext.Provider value={socket}>
+                <Header/>
             <Content>
                 <ContentInnerWrapper>
                     <VoiceWrapper>
@@ -64,6 +67,7 @@ const Room = () => {
                     </MessageWrapper>
                 </ContentInnerWrapper>
             </Content>
+            </SocketContext.Provider>
         </>
     );
 };
