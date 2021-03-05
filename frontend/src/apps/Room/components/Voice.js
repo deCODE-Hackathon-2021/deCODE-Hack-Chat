@@ -80,6 +80,8 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                     setDominantSpeaker(room.dominantSpeaker.identity);
                 });
                 room.on('participantDisconnected', participant => {
+                    if (!participant) return null;
+
                     const newSpeakers = speakers.filter(speaker => speaker.identity !== participant.identity);
                     const newListeners = listeners.filter(listener => listener.identity !== participant.identity);
                     setSpeakers(newSpeakers);
