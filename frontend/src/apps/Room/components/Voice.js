@@ -33,7 +33,14 @@ const SelfImage = styled.img`
     margin-right: 8px;
 `;
 
+const speakerControls = {
+    position: 'absolute',
+    right: 16,
+    top: 16
+}
+
 const leaveButtonStyle = {
+    postion: 'absolute',
     background: 'none',
     border: 'none',
     fontStyle: 'normal',
@@ -41,10 +48,11 @@ const leaveButtonStyle = {
 }
 
 const muteButtonStyle = {
+    postion: 'absolute',
     background: 'none',
     border: 'none',
     fontStyle: 'normal',
-    color: '000000, 60%',
+    color: '0,0,0,0.6',
 }
 
 const speakButtonStyle = {
@@ -173,6 +181,10 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                     });
                 });
 
+                room.localParticipant.audioTracks.forEach(audioTrack => {
+                    audioTrack.track.disable();
+                });
+
                 setListeners(existingListeners);
                 setRoom(room);
                 console.log('ROOM: ' + room);
@@ -249,8 +261,10 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
     return (
         <Wrapper>
             <Box title={`${speakers.length} speaker${speakers.length === 1 ? '' : 's'} on stage`} height={60} styles>
-                {speaking && <button style={leaveButtonStyle} onClick={toggleSpeaker}>Leave</button> }
-                {speaking && <button style={muteButtonStyle} onClick={toggleVoice}>{voiceStatus == "Mute" ? "Unmute" : "Mute"}</button>}
+                <div style={speakerControls}>
+                    {speaking && <button style={muteButtonStyle} onClick={toggleVoice}>{voiceStatus == "Mute" ? "Unmute" : "Mute"}</button>}
+                    {speaking && <button style={leaveButtonStyle} onClick={toggleSpeaker}>Leave</button> }
+                </div>
                 {renderSpeakers()}
             </Box>
             <Box title="Listeners" height={40} styles>
