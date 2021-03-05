@@ -35,7 +35,7 @@ const Voice = ({}) => {
             connectToRoom(response.data);
         }
 
-        // fetchToken();
+        fetchToken();
     }, []);
 
     const connectToRoom = token => {
