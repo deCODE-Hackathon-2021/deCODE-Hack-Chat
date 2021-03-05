@@ -7,14 +7,9 @@ import Voice from './Voice';
 
 import Box from 'common/Box';
 import Questions from "../../Questions";
+import Header from "./Header";
 
-const Header = styled.div`
-    display: flex;
-    background-color: white;
-    height: 350px;
-    justify-content: center;
-    padding: 16px;
-`;
+
 
 const Content = styled.div`
     display: flex;
@@ -24,13 +19,7 @@ const Content = styled.div`
     padding: 8px;
 `;
 
-const HeaderInnerWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    max-width: 900px;
-    width: 100%;
-    height: 600px;
-`;
+
 
 const ContentInnerWrapper = styled.div`
     display: flex;
@@ -57,12 +46,7 @@ const MessageWrapper = styled.div`
 const Room = () => {
     return (
         <>
-            <Header>
-                <HeaderInnerWrapper>
-                    <h2>Dealing with anxiety?</h2>
-                    Free - Voice Event
-                </HeaderInnerWrapper>
-            </Header>
+            <Header/>
             <Content>
                 <ContentInnerWrapper>
                     <VoiceWrapper>
