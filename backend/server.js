@@ -16,8 +16,6 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'));
 });
 
-app.get('/messages', chat.getMessages)
-app.post('/messages', chat.addMessage)
 app.post('/getChatToken', chat.getChatToken)
 
 app.post('/getVoiceToken', voice.getVoiceToken)
