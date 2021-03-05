@@ -40,6 +40,10 @@ const speakButtonStyle = {
     border: 'none',
     fontStyle: 'normal',
     color: '#0584FE',
+    position: 'absolute',
+    right: 16,
+    bottom: 16
+
 }
 
 const mapState = state => {
