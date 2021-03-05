@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 
 const Wrapper = styled.div`
     margin: 16px;
-    height: 300px;
+    height: 220px;
 `;
 
 const MessageList = styled.div`

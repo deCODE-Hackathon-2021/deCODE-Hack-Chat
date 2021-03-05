@@ -7,16 +7,43 @@ import Voice from './Voice';
 
 import Box from 'common/Box';
 
-const Wrapper = styled.div`
+const Header = styled.div`
+    display: flex;
+    background-color: white;
+    height: 350px;
+    justify-content: center;
+    padding: 16px;
+`;
+
+const Content = styled.div`
+    display: flex;
+    height: 700px;
+    justify-content: center;
+    background-color: #e5e5e5;
+    padding: 8px;
+`;
+
+const HeaderInnerWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    width: 100%;
+    height: 600px;
+`;
+
+const ContentInnerWrapper = styled.div`
     display: flex;
     flex-direction: row;
-    height: 100vh;
+    max-width: 900px;
+    width: 100%;
+    height: 600px;
 `;
 
 const VoiceWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    flex-grow: 3;
+    flex-grow: 1;
+    height: 100%;
 `;
 
 const MessageWrapper = styled.div`
@@ -28,20 +55,29 @@ const MessageWrapper = styled.div`
 
 const Room = () => {
     return (
-        <Wrapper>
-            <VoiceWrapper>
-                <h2>Topic: How to reduce stress?</h2>
-                <Box height={50}>
-                    <Voice />
-                </Box>
-            </VoiceWrapper>
-            <MessageWrapper>
-                <Box title="Q&A" height={50} />
-                <Box title="Chat" height={50}>
-                    <Chat />
-                </Box>
-            </MessageWrapper>
-        </Wrapper>
+        <>
+            <Header>
+                <HeaderInnerWrapper>
+                    <h2>Dealing with anxiety?</h2>
+                    Free - Voice Event
+                </HeaderInnerWrapper>
+            </Header>
+            <Content>
+                <ContentInnerWrapper>
+                    <VoiceWrapper>
+                        <Box height={45}>
+                            <Voice />
+                        </Box>
+                        <Box title="Chat" height={55} styles>
+                            <Chat />
+                        </Box>
+                    </VoiceWrapper>
+                    <MessageWrapper>
+                        <Box title="Q&A" height={100} styles />
+                    </MessageWrapper>
+                </ContentInnerWrapper>
+            </Content>
+        </>
     );
 };
 

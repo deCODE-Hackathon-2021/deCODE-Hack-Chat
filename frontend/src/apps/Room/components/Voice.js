@@ -5,6 +5,12 @@ import axios from 'axios';
 import Box from 'common/Box';
 import { connect } from 'twilio-video';
 
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+`;
+
 const Listener = styled.div`
     background-color: grey;
     width: 24px;
@@ -29,7 +35,7 @@ const Voice = ({}) => {
             connectToRoom(response.data);
         }
 
-        fetchToken();
+        // fetchToken();
     }, []);
 
     const connectToRoom = token => {
@@ -91,13 +97,13 @@ const Voice = ({}) => {
     };
 
     return (
-        <>
-            <Box title="3 speakers on stage" height={50} />
-            <Box title="Listeners" height={50}>
+        <Wrapper>
+            <Box title={`${speakers.length} speaker${speakers.length === 1 ? '' : 's'} on stage`} height={60} styles />
+            <Box title="Listeners" height={40} styles>
                 {renderListeners()}
             </Box>
             <div id="remote-media-div" />
-        </>
+        </Wrapper>
     );
 };
 
