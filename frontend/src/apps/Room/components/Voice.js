@@ -18,6 +18,14 @@ const ParticipantWrapper = styled.div`
     flex-direction: row;
 `;
 
+const Speaker = styled.img`
+    background-color: ${props => props.isSpeaking ? '#68BA6C' : 'white'};
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    padding: 3px;
+`;
+
 const Listener = styled.img`
     background-color: grey;
     width: 24px;
@@ -37,15 +45,15 @@ const leaveButtonStyle = {
     background: 'none',
     border: 'none',
     fontStyle: 'normal',
-    color: '#DD3F4F',
-}
+    color: '#DD3F4F'
+};
 
 const muteButtonStyle = {
     background: 'none',
     border: 'none',
     fontStyle: 'normal',
-    color: '000000, 60%',
-}
+    color: '000000, 60%'
+};
 
 const speakButtonStyle = {
     background: 'none',
@@ -55,8 +63,7 @@ const speakButtonStyle = {
     position: 'absolute',
     right: 16,
     bottom: 16
-
-}
+};
 
 const mapState = state => {
     return {
@@ -204,7 +211,7 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
             <ParticipantWrapper>
                 {speakers.map(speaker => {
                     return (
-                        <Listener
+                        <Speaker
                             key={speaker}
                             isSpeaking={dominantSpeaker === speaker}
                             src={members[speaker].attributes.picture}
@@ -216,7 +223,7 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
     };
 
     const toggleVoice = () => {
-        if (voiceStatus === "Mute") {
+        if (voiceStatus === 'Mute') {
             room.localParticipant.audioTracks.forEach(audioTrack => {
                 audioTrack.track.enable();
             });
@@ -249,13 +256,25 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
     return (
         <Wrapper>
             <Box title={`${speakers.length} speaker${speakers.length === 1 ? '' : 's'} on stage`} height={60} styles>
-                {speaking && <button style={leaveButtonStyle} onClick={toggleSpeaker}>Leave</button> }
-                {speaking && <button style={muteButtonStyle} onClick={toggleVoice}>{voiceStatus == "Mute" ? "Unmute" : "Mute"}</button>}
+                {speaking && (
+                    <button style={leaveButtonStyle} onClick={toggleSpeaker}>
+                        Leave
+                    </button>
+                )}
+                {speaking && (
+                    <button style={muteButtonStyle} onClick={toggleVoice}>
+                        {voiceStatus == 'Mute' ? 'Unmute' : 'Mute'}
+                    </button>
+                )}
                 {renderSpeakers()}
             </Box>
             <Box title="Listeners" height={40} styles>
                 {renderListeners()}
-                {!speaking && <button style={speakButtonStyle} onClick={toggleSpeaker}>Speak ✋</button> }
+                {!speaking && (
+                    <button style={speakButtonStyle} onClick={toggleSpeaker}>
+                        Speak ✋
+                    </button>
+                )}
             </Box>
             <div id="remote-media-div" />
         </Wrapper>
