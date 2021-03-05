@@ -5,7 +5,8 @@ import {connect} from "react-redux";
 
 
 const Wrapper = styled.div`
-    padding: 16px;
+    margin: 16px;
+    height: 300px;
 `;
 
 const MessageList = styled.div`
@@ -17,15 +18,19 @@ const MessageList = styled.div`
     overflow-y: auto;
 `;
 
+const ChatInputForm = styled.form`
+    display: flex;
+`
+
 const ChatInput = styled.input`
     border: none;
     border-radius: 32px;
     padding: 0.5em 0.75em;
     background-color: rgba(0, 0, 0, 0.05);
-    color: #rgba(0,0,0,0.1);
+    color: rgba(0,0,0,0.6);
     outline: none;
-    width: 100%;
-    margin-top: 16px;
+    margin-top: 8px;
+    flex-grow: 1;
 `
 
 const mapState = (state) => {
@@ -65,12 +70,12 @@ const Chat = connect(mapState, mapDispatch)((props) => {
     return (
         <Wrapper>
             {renderMessageList({messages})}
-            <form onSubmit={sendMessage}>
+            <ChatInputForm onSubmit={sendMessage}>
                 <ChatInput
                     ref={messageRef}
                     placeholder={'Write a comment...'}
                 />
-            </form>
+            </ChatInputForm>
         </Wrapper>
     );
 });
