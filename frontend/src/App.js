@@ -3,6 +3,8 @@ import './App.css';
 import {incrementCounterAction} from "./redux/actions";
 import {connect} from "react-redux";
 
+import RoomList from 'apps/RoomList/components/RoomList';
+
 const mapState = (state) => ({
     count: state.count
 })
@@ -11,7 +13,6 @@ const mapDispatch = {
     incrementCounterAction
 }
 
-
 const App = connect(mapState, mapDispatch)(
     (props) => {
         const {
@@ -19,16 +20,20 @@ const App = connect(mapState, mapDispatch)(
             incrementCounterAction
         } = props;
 
+        // return (
+        //     <div className="App">
+        //         <header className="App-header">
+        //             <div>
+        //                 count: {count}
+        //             </div>
+        //             <button onClick={() => incrementCounterAction(1)}>Increment</button>
+        //         </header>
+        //     </div>
+        // );
+
         return (
-            <div className="App">
-                <header className="App-header">
-                    <div>
-                        count: {count}
-                    </div>
-                    <button onClick={() => incrementCounterAction(1)}>Increment</button>
-                </header>
-            </div>
-        );
+            <RoomList />
+        )
     });
 
 export default App;
