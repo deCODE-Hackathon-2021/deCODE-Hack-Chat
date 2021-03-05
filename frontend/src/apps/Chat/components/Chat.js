@@ -5,13 +5,14 @@ import {connect} from "react-redux";
 
 
 const Wrapper = styled.div`
-    margin: 16px;
-    height: 220px;
+    display: flex; 
+    flex-direction: column;
+    height: calc(100% - 24px);
 `;
 
 const MessageList = styled.div`
-    height: 100%;
     width: 100%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: stretch;
@@ -20,6 +21,9 @@ const MessageList = styled.div`
 
 const ChatInputForm = styled.form`
     display: flex;
+    align-items: center;
+    position: relative;
+    margin-top: 8px;
 `
 
 const ChatInput = styled.input`
@@ -29,14 +33,28 @@ const ChatInput = styled.input`
     background-color: rgba(0, 0, 0, 0.05);
     color: rgba(0,0,0,0.6);
     outline: none;
-    margin-top: 8px;
     flex-grow: 1;
+`
+
+const ChatSendButton = styled.svg`
+    position: absolute;
+    right: 8px;
+    top: 5px;
+    cursor: pointer;
+`
+
+const SelfImage = styled.img`
+    border-radius: 32px;
+    height: 28px;
+    width: 28px;
+    margin-right: 8px
 `
 
 const mapState = (state) => {
     console.log(state);
     return ({
-        messages: state.chat.messages
+        messages: state.chat.messages,
+        self: state.chat.userData
     })
 }
 
@@ -45,13 +63,14 @@ const mapDispatch = {chatSendMessage}
 const Chat = connect(mapState, mapDispatch)((props) => {
     const {
         chatSendMessage,
-        messages
+        messages,
+        self
     } = props;
 
     const messageRef = useRef(null);
 
     const sendMessage = e => {
-        e.preventDefault();
+        e?.preventDefault();
 
         chatSendMessage(messageRef.current.value);
         messageRef.current.value = '';
@@ -63,6 +82,7 @@ const Chat = connect(mapState, mapDispatch)((props) => {
                 {messages.map(message => (
                     <Message key={message.sid} message={message}/>
                 ))}
+                <div id={'chat-anchor'} style={{overflowAnchor: 'auto', height: '1px'}}></div>
             </MessageList>
         );
     };
@@ -71,10 +91,16 @@ const Chat = connect(mapState, mapDispatch)((props) => {
         <Wrapper>
             {renderMessageList({messages})}
             <ChatInputForm onSubmit={sendMessage}>
+                <SelfImage src={self.picture?.data?.url} />
                 <ChatInput
                     ref={messageRef}
                     placeholder={'Write a comment...'}
                 />
+                <ChatSendButton onClick={() => sendMessage()} width="18" height="19" viewBox="0 0 20 21" fill="#0584FE"
+                                xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M10.8373 10.2033L3.11338 11.4914C3.02458 11.5062 2.94125 11.5441 2.87176 11.6014C2.80228 11.6586 2.74909 11.7331 2.71755 11.8175L0.0543605 18.9518C-0.19996 19.6081 0.48609 20.2336 1.11574 19.9188L19.5745 10.6894C19.7023 10.6256 19.8099 10.5274 19.885 10.4058C19.9602 10.2843 20 10.1442 20 10.0013C20 9.85842 19.9602 9.71834 19.885 9.5968C19.8099 9.47526 19.7023 9.37706 19.5745 9.31322L1.11574 0.0838532C0.48609 -0.230971 -0.19996 0.395601 0.0543605 1.05089L2.71857 8.18519C2.74997 8.2697 2.80309 8.34445 2.87259 8.40188C2.94208 8.45931 3.02549 8.49741 3.11441 8.51232L10.8384 9.7993C10.8859 9.80763 10.929 9.83245 10.96 9.8694C10.9911 9.90635 11.0081 9.95307 11.0081 10.0013C11.0081 10.0496 10.9911 10.0963 10.96 10.1332C10.929 10.1702 10.8859 10.195 10.8384 10.2033H10.8373Z"/>
+                </ChatSendButton>
             </ChatInputForm>
         </Wrapper>
     );
@@ -85,6 +111,7 @@ const MessageWrapper = styled.div`
     align-items: ${props => props.isSelf ? 'flex-end' : 'start'};
     justify-content: ${props => props.isSelf ? 'flex-end' : 'start'};
     margin-bottom: 8px;
+    overflow-anchor: none;
 `;
 
 const MessageAuthor = styled.div`
@@ -98,7 +125,7 @@ const MessageBubble = styled.div`
    border-radius: 16px;
    padding: 0.5em 0.75em;
    background-color: ${props => !props.isSelf ? 'rgba(0, 0, 0, 0.05)' : '#0584FE'};
-   margin-right: 16px;
+   margin-right: 12px;
    max-width: 200px;
    color: ${props => props.isSelf ? 'white' : 'black'};
    word-break: break-all;
@@ -106,9 +133,10 @@ const MessageBubble = styled.div`
 
 const MessagePicture = styled.img`
     border-radius: 32px;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     margin-right: 8px;
+    margin-top: 2px;
 `
 
 const messageMapState = (state, props) => {
@@ -117,7 +145,6 @@ const messageMapState = (state, props) => {
         member,
         isSelf: member.identity === state.chat.userIdentity
     })
-
 }
 const Message = connect(messageMapState)(({message, member, isSelf}) => {
     console.log(isSelf)
