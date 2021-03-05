@@ -13,6 +13,7 @@ const initialState = {
 }
 
 const chatReducer = (state = initialState, action) => {
+    console.log(action);
     switch (action.type) {
         case ACTION_CHAT_RECEIVE_MEMBERS:
             const {members} = action.payload;
@@ -26,13 +27,13 @@ const chatReducer = (state = initialState, action) => {
             const {member} = action.payload;
 
             return produce(state, draft => {
-                draft.members[member.identity] = action.member
+                draft.members[member.identity] = member
             })
         case ACTION_CHAT_RECEIVE_MESSAGE:
             const {message} = action.payload;
 
             return produce(state, draft => {
-                draft.messages.push(message)
+                draft.messages.unshift(message)
             })
         case ACTION_CHAT_SET_USER_IDENTITY:
             return produce(state, draft => {

@@ -13,10 +13,11 @@ export const store = createStore(
     rootReducer,
     applyMiddleware(thunk)
 );
+const user = Math.floor((Math.random() * 10) + 1)
 
 initializeChat(store, {
-    identity: `facebook_uid ${Math.random()}`,
-    name: 'Facebook Name'
+    identity: `facebook_uid ${user}`,
+    name: `Facebook Name ${user}`
 });
 
 ReactDOM.render(

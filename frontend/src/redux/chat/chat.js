@@ -27,8 +27,13 @@ export const initializeChat = async (store, user) => {
 
     const generalChannel = await chatClient.getChannelByUniqueName('general');
     const members = await generalChannel.getUserDescriptors();
+    const self = await chatClient.getUserDescriptor(identity);
+
     store.dispatch(
-        chatReceiveMembers(members.items)
+        chatReceiveMembers([
+            ...members.items,
+            self
+        ])
     )
 
     generalChannel.on('messageAdded', (e) => store.dispatch(

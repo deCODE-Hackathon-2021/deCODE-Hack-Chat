@@ -2,7 +2,6 @@ import logo from './logo.svg';
 import './redux/chat/chat';
 import './App.css';
 import {connect} from "react-redux";
-import ChatPane from "./apps/Chat/components/ChatPane";
 import Chat from "./apps/Chat";
 
 const mapState = (state) => ({
