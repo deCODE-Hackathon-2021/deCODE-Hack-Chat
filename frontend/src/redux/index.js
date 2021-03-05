@@ -1,19 +1,8 @@
-import {ACTION_INCREMENT} from "./actions";
-import produce from 'immer';
+import {combineReducers} from "redux";
+import chatReducer from "./chat";
 
-const initialState = {
-    count: 0
-}
-
-const rootReducer = (state = initialState, action) => {
-    switch (action.type) {
-        case ACTION_INCREMENT:
-            return produce(state, draft => {
-                draft.count += action.payload.increment;
-            });
-        default:
-            return state;
-    }
-}
+const rootReducer = combineReducers({
+    chat: chatReducer
+})
 
 export default rootReducer
