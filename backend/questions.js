@@ -31,6 +31,7 @@ const broadcast = (type, data) => {
 };
 
 const handleError = (err, webSocket) => {
+    console.log(err)
     send(webSocket, 'error', err);
 };
 
@@ -72,9 +73,9 @@ wss.on('connection', async webSocket => {
         const questions = await client.send(new ScanCommand({
             TableName: 'questions'
         }));
-        const response = questions.map(parseQuestion);
+        const response = questions.Items.map(parseQuestion);
         send(webSocket, 'questions', response);
     } catch (e) {
-        handleError(e);
+        handleError(e, webSocket);
     }
 });
