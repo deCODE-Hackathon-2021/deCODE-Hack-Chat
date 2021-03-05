@@ -4,7 +4,6 @@ import {questionsReceiveQuestion, questionsReceiveQuestions} from "./actions";
 export const questionsHelper = {};
 
 const initializeQuestions = async (store, user) => {
-    console.log('initializeQuestions')
     const {
         identity
     } = user;

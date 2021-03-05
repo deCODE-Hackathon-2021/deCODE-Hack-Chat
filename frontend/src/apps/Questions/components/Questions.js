@@ -30,6 +30,7 @@ const QuestionContentWrapper = styled.div`
 const QuestionWrapper = styled.div`
     display: flex;
     padding: 8px 0px 8px 0px;
+    max-width: 100%;
 `
 
 const QuestionVotesWrapper = styled.div`
@@ -75,7 +76,8 @@ const Question = connect(questionMapState, questionsMapDispatch)((props) => {
 })
 
 const Wrapper = styled.div`
-overflow-y: auto;
+    overflow-y: auto;
+    max-height: calc(100% - 16px);
 `
 
 const mapState = (state) => ({
