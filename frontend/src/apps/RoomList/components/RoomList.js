@@ -4,20 +4,23 @@ import axios from 'axios';
 import { connect } from 'twilio-video';
 
 const RoomList = () => {
-    const token = useState(null)
+    const [token, setToken] = useState(null);
 
-    // useEffect(async () => {
-    //     const response = await axios.get('/token');
-    //
-    //     console.log(response);
-    // }, []);
+    useEffect(async () => {
+        const response = await axios.post('/getVoiceToken', {
+            identity: `${Math.floor(Math.random() * 1000)}`,
+            name: ''
+        });
+
+        setToken(response.data);
+    }, []);
 
     if (!token) return null;
 
     const connectToRoom = () => {
         connect(
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzVlMDk1Yjc5MjQ5ZDg0YWYwMmMwODI2YjNkM2EzNGU2LTE2MTQ5MTExODkiLCJpc3MiOiJTSzVlMDk1Yjc5MjQ5ZDg0YWYwMmMwODI2YjNkM2EzNGU2Iiwic3ViIjoiQUM4N2FiZWI1MGI1YzAzM2JhNmVhYTkxOWIxNmIyYTMwNyIsImV4cCI6MTYxNDkxNDc4OSwiZ3JhbnRzIjp7ImlkZW50aXR5IjoidGVzdCIsInZpZGVvIjp7fX19.Fk5YxIz8U2NBYp0PASrdh5BbCIKVlrUOxyhhjoZF6wg',
-            { name: 'existing-room', audio: true }
+            token,
+            { name: 'existing-room', audio: true, dominantSpeaker: true }
         ).then(
             room => {
                 console.log(`Successfully joined a Room: ${room}`);
@@ -54,9 +57,7 @@ const RoomList = () => {
         );
     };
 
-    const joinRoom = () => {
-
-    }
+    const joinRoom = () => {};
 
     return (
         <>
