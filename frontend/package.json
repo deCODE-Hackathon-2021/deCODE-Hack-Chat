@@ -25,7 +25,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "ec2-start": "PORT=80 HTTPS=true DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start"
   },
   "eslintConfig": {
     "extends": [
