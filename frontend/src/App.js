@@ -30,6 +30,7 @@ function App() {
         <div>
             <div>
                 {!login &&
+                <div style={{ marginTop: '20%', alignItems: 'center', display: 'flex', justifyContent: 'center'}}>
                 <FacebookLogin
                     appId="785768468241627"
                     autoLoad={true}
@@ -37,6 +38,7 @@ function App() {
                     scope="public_profile,user_friends"
                     callback={responseFacebook}
                     icon="fa-facebook"/>
+                 </div>
                 }
             </div>
             <div>
