@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import Chat from 'apps/Chat';
+
+import Voice from './Voice';
+
+import Box from 'common/Box';
 
 const Wrapper = styled.div`
     display: flex;
@@ -10,9 +14,9 @@ const Wrapper = styled.div`
 `;
 
 const VoiceWrapper = styled.div`
-      display: flex;
-      flex-direction: column;
-      flex-grow: 3;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 3;
 `;
 
 const MessageWrapper = styled.div`
@@ -23,36 +27,21 @@ const MessageWrapper = styled.div`
 `;
 
 const Room = () => {
-    const renderChat = () => {
-        return <Chat />;
-    }
-
     return (
         <Wrapper>
             <VoiceWrapper>
                 <h2>Topic: How to reduce stress?</h2>
-                <Box title="3 speakers on stage" height={25} />
-                <Box title="Listeners" height={25} />
+                <Box height={50}>
+                    <Voice />
+                </Box>
             </VoiceWrapper>
             <MessageWrapper>
                 <Box title="Q&A" height={50} />
-                <Box title="Chat" height={50} content={renderChat} />
+                <Box title="Chat" height={50}>
+                    <Chat />
+                </Box>
             </MessageWrapper>
         </Wrapper>
-    );
-};
-
-const BoxWrapper = styled.div`
-    width: 100%;
-    min-height: ${props => props.height}%;
-`;
-
-const Box = ({ title, content = () => {}, height, width }) => {
-    return (
-        <BoxWrapper height={height} width={width}>
-            <h2>{title}</h2>
-            {content()}
-        </BoxWrapper>
     );
 };
 
