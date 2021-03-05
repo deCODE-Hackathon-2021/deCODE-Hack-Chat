@@ -15,7 +15,16 @@ const questions = [
 ]
 
 const handleConnect = (items, webSocket) => { 
-  
+  const response = items.map((item) => {
+    return {
+      questionId: item.questionId.S,
+      userId: item.userId.S,
+      question: item.question.S,
+      likes: item.likes.SS,
+      isAnon: item.isAnon.BOOL
+    }
+  })
+  webSocket.send(JSON.stringify(response))
 }
 
 const handleError = (err, webSocket) => { 
@@ -40,7 +49,7 @@ wss.on('connection', webSocket => {
           isAnon: {BOOL: questionItem.isAnon}
         }
       })).then(
-        () => broadcast(question), 
+        () => broadcast(questionItem), 
         (err) => handleError(err, webSocket)
       )
       .catch(
@@ -55,7 +64,13 @@ wss.on('connection', webSocket => {
   const res = client.send(new ScanCommand({
     TableName: 'questions'
   }))
-  .then((res) => handleConnect(res.Items, webSocket))
+  .then(
+    (res) => handleConnect(res.Items, webSocket),
+    (err) => console.log(err)
+  )
+  .catch(
+    (err) => console.log(err)
+  )
 });
 
 function broadcast(data) {
