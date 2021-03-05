@@ -1,83 +1,80 @@
-const WebSocket = require('ws')
+require('dotenv').config();
+
+const WebSocket = require('ws');
+const uuid = require('uuid');
 const { DynamoDBClient, ScanCommand, QueryCommand, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 const client = new DynamoDBClient({ region: 'us-east-2' });
 
-const wss = new WebSocket.Server({ port: 3002 })
+const wss = new WebSocket.Server({ port: 3002 });
 
-const questions = [
-  {
-    questionId: "someRandomId",
-    userId: "somemid", 
-    question: "some message",
-    likes: ["a-user", "another-user"],
-    isAnon: false
-  }
-]
-
-const handleConnect = (items, webSocket) => { 
-  const response = items.map((item) => {
-    return {
-      questionId: item.questionId.S,
-      userId: item.userId.S,
-      question: item.question.S,
-      likes: item.likes.SS,
-      isAnon: item.isAnon.BOOL
-    }
-  })
-  webSocket.send(JSON.stringify(response))
-}
-
-const handleError = (err, webSocket) => { 
-  console.log(err)
-  webSocket.send("Couldn't put item in dynamodb")
-}
-
-wss.on('connection', webSocket => {
-  webSocket.on('message', question => {
-    
-    // console.log(process.env)
-    // console.log(results.log)
-    try { 
-      const questionItem = JSON.parse(question)
-      const results = client.send(new PutItemCommand({
-        TableName: 'questions',
-        Item: {
-          questionId: {S: questionItem.questionId},
-          userId: {S: questionItem.userId},
-          question: {S: questionItem.question},
-          likes: {SS: questionItem.likes},
-          isAnon: {BOOL: questionItem.isAnon}
-        }
-      })).then(
-        () => broadcast(questionItem), 
-        (err) => handleError(err, webSocket)
-      )
-      .catch(
-        (err) => console.log(err)
-      )
-      
-    } catch(e) { 
-      console.log(e)
-      webSocket.send("JSON parse error")
-    }
-  });
-  const res = client.send(new ScanCommand({
-    TableName: 'questions'
-  }))
-  .then(
-    (res) => handleConnect(res.Items, webSocket),
-    (err) => console.log(err)
-  )
-  .catch(
-    (err) => console.log(err)
-  )
+const parseQuestion = (question) => ({
+    questionId: question.questionId.S,
+    userId: question.userId.S,
+    question: question.question.S,
+    likes: question.likes.SS,
+    isAnon: question.isAnon.BOOL
 });
 
-function broadcast(data) {
-  wss.clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(data));
-    }
-  });
-}
+const send = (webSocket, type, data) => webSocket.send(
+    JSON.stringify({
+        type,
+        payload: data
+    })
+);
 
+const broadcast = (type, data) => {
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            send(client, type, data);
+        }
+    });
+};
+
+const handleError = (err, webSocket) => {
+    send(webSocket, 'error', err);
+};
+
+wss.on('connection', async webSocket => {
+    webSocket.on('message', async rawMessage => {
+        // {type: '...', payload: {...}}
+        const message = JSON.parse(rawMessage);
+        console.log('receive message', message);
+
+        if (message.type === 'addQuestion') {
+            const question = message.payload;
+
+            const newQuestion = {
+                questionId: { S: uuid.v1() },
+                userId: { S: question.userId },
+                question: { S: question.question },
+                likes: { SS: [question.userId] },
+                isAnon: { BOOL: question.isAnon }
+            };
+
+            try {
+                await client.send(new PutItemCommand({
+                    TableName: 'questions',
+                    Item: newQuestion
+                }));
+
+                broadcast(
+                    'addQuestion',
+                    parseQuestion(newQuestion)
+                );
+
+            } catch (e) {
+                handleError(e, webSocket);
+            }
+        }
+    });
+
+    try {
+        const questions = await client.send(new ScanCommand({
+            TableName: 'questions'
+        }));
+        const response = questions.map(parseQuestion);
+        send(webSocket, 'questions', response);
+    } catch (e) {
+        handleError(e);
+    }
+});
