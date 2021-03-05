@@ -1,12 +1,13 @@
 import Twilio from 'twilio-chat'
-import {chatJoinMember, chatReceiveMembers, chatReceiveMessage, chatSetUserIdentity} from "./actions";
+import {chatJoinMember, chatReceiveMembers, chatReceiveMessage, chatSetUserIdentity, chatSetUserData} from "./actions";
 
 export const chatHelpers = {};
 
 export const initializeChat = async (store, user) => {
     const {
         identity,
-        name
+        name,
+        data
     } = user;
 
     const tokenResponse = await fetch('/getChatToken', {
@@ -17,8 +18,11 @@ export const initializeChat = async (store, user) => {
         body: JSON.stringify({identity, name})
     })
     store.dispatch(
-        chatSetUserIdentity(identity)
-    )
+      chatSetUserIdentity(identity)
+    );
+    store.dispatch(
+      chatSetUserData(data)
+    );
 
     const token = (await tokenResponse.json()).token;
     const chatClient = await Twilio.create(

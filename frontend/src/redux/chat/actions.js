@@ -6,6 +6,7 @@ export const ACTION_CHAT_LEAVE_MEMBER = 'chat/leaveMember';
 export const ACTION_CHAT_SEND_MESSAGE = 'chat/sendMessage';
 export const ACTION_CHAT_RECEIVE_MESSAGE = 'chat/receiveMessage';
 export const ACTION_CHAT_SET_USER_IDENTITY = 'chat/setUserIdentity';
+export const ACTION_CHAT_SET_USER_DATA = 'chat/setUserData';
 
 export const chatReceiveMembers = (members) => ({
     type: ACTION_CHAT_RECEIVE_MEMBERS,
@@ -46,4 +47,11 @@ export const chatSetUserIdentity = (identity) => ({
     payload: {
         identity
     }
+})
+
+export const chatSetUserData = (data) => ({
+  type: ACTION_CHAT_SET_USER_DATA,
+  payload: {
+    data
+  }
 })

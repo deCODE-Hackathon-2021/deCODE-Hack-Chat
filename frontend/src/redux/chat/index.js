@@ -2,14 +2,16 @@ import {
     ACTION_CHAT_JOIN_MEMBER,
     ACTION_CHAT_RECEIVE_MEMBERS,
     ACTION_CHAT_RECEIVE_MESSAGE,
-    ACTION_CHAT_SET_USER_IDENTITY
+    ACTION_CHAT_SET_USER_IDENTITY,
+    ACTION_CHAT_SET_USER_DATA
 } from "./actions";
 import produce from "immer";
 
 const initialState = {
     members: {},
     messages: [],
-    userIdentity: undefined
+    userIdentity: undefined,
+    userData: {}
 }
 
 const chatReducer = (state = initialState, action) => {
@@ -28,6 +30,12 @@ const chatReducer = (state = initialState, action) => {
 
             return produce(state, draft => {
                 draft.members[member.identity] = member
+                })
+        case ACTION_CHAT_SET_USER_DATA:
+            const {data} = action.payload;
+
+            return produce(state, draft => {
+              draft.userData = data;
             })
         case ACTION_CHAT_RECEIVE_MESSAGE:
             const {message} = action.payload;
