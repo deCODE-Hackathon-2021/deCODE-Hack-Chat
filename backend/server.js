@@ -18,6 +18,7 @@ app.get('/', function(req, res) {
 
 app.get('/messages', chat.getMessages)
 app.post('/messages', chat.addMessage)
+app.post('/getChatToken', chat.getChatToken)
 
 app.post('/getVoiceToken', voice.getVoiceToken)
 

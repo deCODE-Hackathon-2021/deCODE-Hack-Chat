@@ -7,11 +7,18 @@ import {applyMiddleware, createStore} from "redux";
 import rootReducer from "./redux";
 import {Provider} from "react-redux";
 import thunk from "redux-thunk";
+import {initializeChat} from "./redux/chat/chat";
 
-const store = createStore(
+export const store = createStore(
     rootReducer,
     applyMiddleware(thunk)
 );
+const user = Math.floor((Math.random() * 10) + 1)
+
+initializeChat(store, {
+    identity: `facebook_uid ${user}`,
+    name: `Facebook Name ${user}`
+});
 
 ReactDOM.render(
   <React.StrictMode>
