@@ -34,6 +34,9 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
     const [speakers, setSpeakers] = useState([]);
     const [listeners, setListeners] = useState([]);
     const [dominantSpeaker, setDominantSpeaker] = useState(null);
+    const [voiceStatus, setVoiceStatus] = useState("Mute");
+    const [speaking, setSpeaking] = useState(false)
+    const [room, setRoom] = useState(null);
 
     useEffect(() => {
         const fetchToken = async () => {
@@ -99,6 +102,8 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                 });
 
                 setListeners(existingListeners);
+                setRoom(room)
+                console.log("ROOM: " + room);
             },
             error => {
                 console.error(`Unable to connect to Room: ${error.message}`);
@@ -112,11 +117,44 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
         });
     };
 
+    const toggleVoice = () => {                                           // Voice toggle event handler
+        if (voiceStatus === "Mute") {
+            room.localParticipant.audioTracks.forEach(audioTrack => {
+                audioTrack.track.enable();
+            });
+            setVoiceStatus("Unmute");
+        } else {
+            room.localParticipant.audioTracks.forEach(audioTrack => {
+                audioTrack.track.disable();
+            });
+            setVoiceStatus("Mute");
+        }
+    }
+
+    const toggleSpeaker = () => {
+        if (speaking) {
+            room.localParticipant.audioTracks.forEach(audioTrack => {
+                audioTrack.track.disable();
+            });
+            setVoiceStatus("Mute");
+        } else {
+            room.localParticipant.audioTracks.forEach(audioTrack => {
+                audioTrack.track.enable();
+            });
+            setVoiceStatus("Unmute");
+        }
+        setSpeaking(!speaking)
+    }
+
     return (
         <Wrapper>
-            <Box title={`${speakers.length} speaker${speakers.length === 1 ? '' : 's'} on stage`} height={60} styles />
+            <Box title={`${speakers.length} speaker${speakers.length === 1 ? '' : 's'} on stage`} height={60} styles>
+                {speaking && <button onClick={toggleSpeaker}>Leave</button> }
+                {speaking && <button onClick={toggleVoice}>{voiceStatus == "Mute" ? "Unmute" : "Mute"}</button>}
+            </Box>
             <Box title="Listeners" height={40} styles>
                 {renderListeners()}
+                {!speaking && <button onClick={toggleSpeaker}>Raise Hand</button> }
             </Box>
             <div id="remote-media-div" />
         </Wrapper>
