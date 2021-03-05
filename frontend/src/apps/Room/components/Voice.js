@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { connect as reduxConnect } from 'react-redux';
 
 import Box from 'common/Box';
 import { connect } from 'twilio-video';
@@ -19,24 +20,35 @@ const Listener = styled.div`
     ${props => props.isSpeaking && `border: 3px solid #68BA6C;`}
 `;
 
-const Voice = ({}) => {
+const mapState = state => {
+    return {
+        identity: state.chat.userData.id
+    };
+};
+
+const mapDispatch = {};
+
+const Voice = reduxConnect(mapState, mapDispatch)(props => {
+    const { identity } = props;
+
     const [speakers, setSpeakers] = useState([]);
     const [listeners, setListeners] = useState([]);
     const [dominantSpeaker, setDominantSpeaker] = useState(null);
-    const identity = `${Math.floor(Math.random() * 1000)}`;
 
     useEffect(() => {
         const fetchToken = async () => {
+            if (!identity) return null;
+
             const response = await axios.post('/getVoiceToken', {
                 identity,
                 name: ''
             });
 
             connectToRoom(response.data);
-        }
+        };
 
         fetchToken();
-    }, []);
+    }, [identity]);
 
     const connectToRoom = token => {
         connect(
@@ -65,7 +77,11 @@ const Voice = ({}) => {
                     console.log(`DOMINANT SPEAKER CHANGED: ${room.dominantSpeaker.identity}`);
 
                     setDominantSpeaker(room.dominantSpeaker.identity);
-                })
+                });
+                room.on('participantDisconnected', event => {
+                    console.log('PARTICIPANT DISCONNECTING');
+                    console.log(event);
+                });
 
                 // DISPLAY EXISTING LISTENERS
                 room.participants.forEach(participant => {
@@ -105,6 +121,6 @@ const Voice = ({}) => {
             <div id="remote-media-div" />
         </Wrapper>
     );
-};
+});
 
 export default Voice;
