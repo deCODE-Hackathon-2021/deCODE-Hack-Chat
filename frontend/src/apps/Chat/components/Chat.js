@@ -82,8 +82,8 @@ const Chat = connect(mapState, mapDispatch)((props) => {
 
 const MessageWrapper = styled.div`
     display: flex;
-    flex-direction: column;
-    align-items: start;
+    align-items: ${props => props.isSelf ? 'flex-end' : 'start'};
+    justify-content: ${props => props.isSelf ? 'flex-end' : 'start'};
     margin-bottom: 8px;
 `;
 
@@ -95,28 +95,46 @@ const MessageAuthor = styled.div`
 `
 
 const MessageBubble = styled.div`
-   border-radius: 32px;
+   border-radius: 16px;
    padding: 0.5em 0.75em;
-   background-color: rgba(0, 0, 0, 0.05);
+   background-color: ${props => !props.isSelf ? 'rgba(0, 0, 0, 0.05)' : '#0584FE'};
    margin-right: 16px;
+   max-width: 200px;
+   color: ${props => props.isSelf ? 'white' : 'black'};
+   word-break: break-all;
+`
+
+const MessagePicture = styled.img`
+    border-radius: 32px;
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
 `
 
 const messageMapState = (state, props) => {
+    const member = state.chat.members[props.message.author]
     return ({
-        member: state.chat.members[props.message.author]
+        member,
+        isSelf: member.identity === state.chat.userIdentity
     })
 
 }
-const Message = connect(messageMapState)(({message, member}) => {
-
+const Message = connect(messageMapState)(({message, member, isSelf}) => {
+    console.log(isSelf)
     return (
-        <MessageWrapper>
-            <MessageAuthor>
-                {member?.friendlyName}
-            </MessageAuthor>
-            <MessageBubble>
-                {message.body}
-            </MessageBubble>
+        <MessageWrapper isSelf={isSelf}>
+            <div>
+                <MessageAuthor>
+                    {member?.friendlyName}
+                </MessageAuthor>
+                <div style={{display: 'flex', alignItems: 'start'}}>
+                    {!isSelf && <MessagePicture src={member.attributes.picture}/>}
+                    <MessageBubble isSelf={isSelf}>
+                        {message.body}
+                    </MessageBubble>
+                    {isSelf && <MessagePicture src={member.attributes.picture}/>}
+                </div>
+            </div>
         </MessageWrapper>
     );
 })

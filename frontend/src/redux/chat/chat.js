@@ -15,7 +15,11 @@ export const initializeChat = async (store, user) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({identity, name})
+        body: JSON.stringify({
+            identity,
+            name,
+            picture: data.picture?.data?.url
+        })
     })
     store.dispatch(
       chatSetUserIdentity(identity)
@@ -28,6 +32,8 @@ export const initializeChat = async (store, user) => {
     const chatClient = await Twilio.create(
         token,
     );
+    console.log('initiaized chat client')
+    chatHelpers.chatClient = chatClient;
 
     const generalChannel = await chatClient.getChannelByUniqueName('general');
     const members = await generalChannel.getUserDescriptors();
@@ -54,8 +60,9 @@ export const initializeChat = async (store, user) => {
     if(generalChannel.status !== 'joined') {
         await generalChannel.join();
     } else {
+        /*console.log('leaving channel')
         await generalChannel.leave();
-        await generalChannel.join();
+        await generalChannel.join();*/
     }
 
     await new Promise((res) => setTimeout(() => res(), 500))
