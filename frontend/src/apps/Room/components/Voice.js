@@ -20,6 +20,27 @@ const Listener = styled.div`
     ${props => props.isSpeaking && `border: 3px solid #68BA6C;`}
 `;
 
+const leaveButtonStyle = {
+    background: 'none',
+    border: 'none',
+    fontStyle: 'normal',
+    color: '#DD3F4F',
+}
+
+const muteButtonStyle = {
+    background: 'none',
+    border: 'none',
+    fontStyle: 'normal',
+    color: '000000, 60%',
+}
+
+const speakButtonStyle = {
+    background: 'none',
+    border: 'none',
+    fontStyle: 'normal',
+    color: '#0584FE',
+}
+
 const mapState = state => {
     return {
         identity: state.chat.userData.id
@@ -124,7 +145,7 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
         });
     };
 
-    const toggleVoice = () => {                                           // Voice toggle event handler
+    const toggleVoice = () => {
         if (voiceStatus === "Mute") {
             room.localParticipant.audioTracks.forEach(audioTrack => {
                 audioTrack.track.enable();
@@ -156,12 +177,12 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
     return (
         <Wrapper>
             <Box title={`${speakers.length} speaker${speakers.length === 1 ? '' : 's'} on stage`} height={60} styles>
-                {speaking && <button onClick={toggleSpeaker}>Leave</button> }
-                {speaking && <button onClick={toggleVoice}>{voiceStatus == "Mute" ? "Unmute" : "Mute"}</button>}
+                {speaking && <button style={leaveButtonStyle} onClick={toggleSpeaker}>Leave</button>}
+                {speaking && <button style={muteButtonStyle} onClick={toggleVoice}>{voiceStatus == "Mute" ? "Unmute" : "Mute"}</button>}
             </Box>
             <Box title="Listeners" height={40} styles>
                 {renderListeners()}
-                {!speaking && <button onClick={toggleSpeaker}>Raise Hand</button> }
+                {!speaking && <button style={speakButtonStyle} onClick={toggleSpeaker}>Speak ✋</button> }
             </Box>
             <div id="remote-media-div" />
         </Wrapper>
