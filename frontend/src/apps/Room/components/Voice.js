@@ -37,16 +37,26 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
 
     const socket = useContext(SocketContext);
 
-    const handleJoinChat = useCallback(() => {
-        socket.emit("addSpeaker", "Test");
+    const handleJoinSpeakers = useCallback(() => {
+        socket.emit("addSpeaker", identity);
     }, []);
 
-    handleJoinChat();
+    const handleLeaveSpeakers = useCallback(() => {
+        socket.emit("removeSpeaker", identity);
+    }, []);
+
 
     const [dominantSpeaker, setDominantSpeaker] = useState(null);
     const [voiceStatus, setVoiceStatus] = useState("Mute");
     const [speaking, setSpeaking] = useState(false)
     const [room, setRoom] = useState(null);
+
+    useEffect(() => {
+        socket.on("listSpeakers", (handleSpeakers) => {
+            console.log(handleSpeakers)
+            setSpeakers(handleSpeakers);
+        });
+    }, [socket]);
 
     useEffect(() => {
         const fetchToken = async () => {
@@ -96,10 +106,8 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                 });
                 room.on('participantDisconnected', participant => {
                     if (!participant) return null;
-
                     const newSpeakers = speakers.filter(speaker => speaker.identity !== participant.identity);
                     const newListeners = listeners.filter(listener => listener.identity !== participant.identity);
-                    setSpeakers(newSpeakers);
                     setListeners(newListeners);
                 });
 
@@ -130,7 +138,13 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
 
     const renderListeners = () => {
         return listeners.map(listener => {
-            return <Listener key={listener.identity} isSpeaking={dominantSpeaker === listener.identity} />;
+            return <Listener key={listener.identity} isSpeaking={false} />;
+        });
+    };
+
+    const renderSpeakers = () => {
+        return speakers.map(speaker => {
+            return <Listener key={speaker} isSpeaking={dominantSpeaker === speaker} />;
         });
     };
 
@@ -154,11 +168,13 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                 audioTrack.track.disable();
             });
             setVoiceStatus("Mute");
+            handleLeaveSpeakers();
         } else {
             room.localParticipant.audioTracks.forEach(audioTrack => {
                 audioTrack.track.enable();
             });
             setVoiceStatus("Unmute");
+            handleJoinSpeakers();
         }
         setSpeaking(!speaking)
     }
@@ -168,12 +184,12 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
             <Box title={`${speakers.length} speaker${speakers.length === 1 ? '' : 's'} on stage`} height={60} styles>
                 {speaking && <button onClick={toggleSpeaker}>Leave</button> }
                 {speaking && <button onClick={toggleVoice}>{voiceStatus == "Mute" ? "Unmute" : "Mute"}</button>}
+                {renderSpeakers()}
             </Box>
             <Box title="Listeners" height={40} styles>
                 {renderListeners()}
                 {!speaking && <button onClick={toggleSpeaker}>Raise Hand</button> }
             </Box>
-            <button onClick={handleJoinChat}/>
             <div id="remote-media-div" />
         </Wrapper>
     );
