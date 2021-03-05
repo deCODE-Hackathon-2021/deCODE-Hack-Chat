@@ -1,5 +1,8 @@
+import {useEffect, useContext, useCallback} from "react";
 import Twilio from 'twilio-chat'
 import {chatJoinMember, chatReceiveMembers, chatReceiveMessage, chatSetUserIdentity, chatSetUserData} from "./actions";
+import {SocketContext} from '../../socketio';
+
 
 export const chatHelpers = {};
 
@@ -20,7 +23,9 @@ export const initializeChat = async (store, user) => {
             name,
             picture: data.picture?.data?.url
         })
-    })
+    });
+
+
     store.dispatch(
       chatSetUserIdentity(identity)
     );

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React , {useEffect, useState, useContext, useCallback} from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { connect as reduxConnect } from 'react-redux';
+import {SocketContext} from '../../../socketio';
 
 import Box from 'common/Box';
 import { connect } from 'twilio-video';
@@ -33,6 +34,15 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
 
     const [speakers, setSpeakers] = useState([]);
     const [listeners, setListeners] = useState([]);
+
+    const socket = useContext(SocketContext);
+
+    const handleJoinChat = useCallback(() => {
+        socket.emit("addSpeaker", "Test");
+    }, []);
+
+    handleJoinChat();
+
     const [dominantSpeaker, setDominantSpeaker] = useState(null);
     const [voiceStatus, setVoiceStatus] = useState("Mute");
     const [speaking, setSpeaking] = useState(false)
@@ -163,6 +173,7 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                 {renderListeners()}
                 {!speaking && <button onClick={toggleSpeaker}>Raise Hand</button> }
             </Box>
+            <button onClick={handleJoinChat}/>
             <div id="remote-media-div" />
         </Wrapper>
     );

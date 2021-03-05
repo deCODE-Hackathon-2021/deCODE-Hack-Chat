@@ -1,5 +1,6 @@
-import React from 'react';
+import React , {useEffect, useContext, useCallback} from 'react';
 import styled from 'styled-components';
+import {SocketContext, socket} from '../../../socketio';
 
 import Chat from 'apps/Chat';
 
@@ -43,9 +44,17 @@ const MessageWrapper = styled.div`
 `;
 
 const Room = () => {
+
+
     return (
         <>
-            <Header/>
+            <SocketContext.Provider value={socket}>
+            <Header>
+                <HeaderInnerWrapper>
+                    <h2>Dealing with anxiety?</h2>
+                    Free - Voice Event
+                </HeaderInnerWrapper>
+            </Header>
             <Content>
                 <ContentInnerWrapper>
                     <VoiceWrapper>
@@ -63,6 +72,7 @@ const Room = () => {
                     </MessageWrapper>
                 </ContentInnerWrapper>
             </Content>
+            </SocketContext.Provider>
         </>
     );
 };
