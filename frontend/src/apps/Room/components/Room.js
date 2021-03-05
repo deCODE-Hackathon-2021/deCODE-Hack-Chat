@@ -73,7 +73,9 @@ const Room = () => {
                         </Box>
                     </VoiceWrapper>
                     <MessageWrapper>
-                        <Box title="Q&A" height={100} styles />
+                        <Box title="Q&A" height={100} styles>
+                            <button>Ask Question</button>
+                        </Box>
                     </MessageWrapper>
                 </ContentInnerWrapper>
             </Content>
