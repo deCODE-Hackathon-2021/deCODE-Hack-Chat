@@ -4,6 +4,7 @@ import Room from "./apps/Room";
 import './App.css';
 import {store} from "./index";
 import {initializeChat} from "./redux/chat/chat";
+import initializeQuestions from "./redux/questions/questions";
 
 
 function App() {
@@ -14,11 +15,14 @@ function App() {
         setData(response);
 
         if (response.accessToken) {
-            await initializeChat(store, {
+            const user = {
                 identity: `${response.id}`,
                 name: `${response.name}`,
                 data: response
-            });
+            };
+
+            await initializeChat(store, user);
+            await initializeQuestions(store, user);
 
             setLogin(true);
         } else {

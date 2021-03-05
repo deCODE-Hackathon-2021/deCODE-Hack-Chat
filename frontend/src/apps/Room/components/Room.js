@@ -6,6 +6,7 @@ import Chat from 'apps/Chat';
 import Voice from './Voice';
 
 import Box from 'common/Box';
+import Questions from "../../Questions";
 
 const Header = styled.div`
     display: flex;
@@ -73,7 +74,9 @@ const Room = () => {
                         </Box>
                     </VoiceWrapper>
                     <MessageWrapper>
-                        <Box title="Q&A" height={100} styles />
+                        <Box title="Q&A" height={100} styles>
+                            <Questions/>
+                        </Box>
                     </MessageWrapper>
                 </ContentInnerWrapper>
             </Content>
