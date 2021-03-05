@@ -53,6 +53,17 @@ const MessageWrapper = styled.div`
     height: 100%;
 `;
 
+const AskButton = styled.button`
+    background: ${props => props.primary ? "#0066ff" : "white"};
+    color: ${props => props.primary ? "white" : "#0066ff"};
+    font-size: 1em;
+    margin-top: 31em;
+    padding: 0.25em 1em;
+    border: 2px solid #0066ff;
+    border-radius: 3px;
+    width: 100%;
+`;
+
 const Room = () => {
     return (
         <>
@@ -74,7 +85,7 @@ const Room = () => {
                     </VoiceWrapper>
                     <MessageWrapper>
                         <Box title="Q&A" height={100} styles>
-                            <button>Ask Question</button>
+                            <AskButton primary>Ask Question</AskButton>
                         </Box>
                     </MessageWrapper>
                 </ContentInnerWrapper>
