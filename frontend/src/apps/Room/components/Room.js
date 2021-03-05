@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Chat from 'apps/Chat';
@@ -6,6 +6,9 @@ import Chat from 'apps/Chat';
 import Voice from './Voice';
 
 import Box from 'common/Box';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import './style.css'
 
 const Header = styled.div`
     display: flex;
@@ -64,7 +67,33 @@ const AskButton = styled.button`
     width: 100%;
 `;
 
+const Submit = styled.button`
+    background: ${props => props.primary ? "#0066ff" : "white"};
+    color: ${props => props.primary ? "white" : "#0066ff"};
+    font-size: 1.5em;
+    margin-top: 7em;
+    padding: 0.25em 1em;
+    border: 2px solid #0066ff;
+    border-radius: 3px;
+    width: 100%;
+`;
+
+const QuesInputForm = styled.form`
+    display: flex;
+    margin-top: 15px;
+`
+
+const QuesInput = styled.input`
+    padding: 10px;
+    line-height: 140%;
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 1.5em;
+`;
+
 const Room = () => {
+
     return (
         <>
             <Header>
@@ -85,7 +114,31 @@ const Room = () => {
                     </VoiceWrapper>
                     <MessageWrapper>
                         <Box title="Q&A" height={100} styles>
-                            <AskButton primary>Ask Question</AskButton>
+                            <Popup trigger={
+                                <AskButton primary>Ask Question</AskButton>}
+                                modal
+                                nested
+                            >
+                                {close => (
+                                    <div className="modal">
+                                        <button className="close" onClick={close}>
+                                            &times;
+                                        </button>
+                                        <div className="header">Submit a Question </div>
+                                        <QuesInputForm>
+                                            <QuesInput placeholder={"What's your question?"} />
+                                        </QuesInputForm>
+                                        <Submit primary
+                                            onClick={() => {
+                                                console.log('modal closed ');
+                                                close();
+                                            }}
+                                        >
+                                            Submit
+                                            </Submit>
+                                    </div>
+                                )}
+                            </Popup>
                         </Box>
                     </MessageWrapper>
                 </ContentInnerWrapper>
@@ -93,5 +146,6 @@ const Room = () => {
         </>
     );
 };
+
 
 export default Room;
