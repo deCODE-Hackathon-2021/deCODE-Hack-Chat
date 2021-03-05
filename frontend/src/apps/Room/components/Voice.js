@@ -74,13 +74,13 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                     });
                 });
                 room.on('dominantSpeakerChanged', () => {
-                    console.log(`DOMINANT SPEAKER CHANGED: ${room.dominantSpeaker.identity}`);
-
                     setDominantSpeaker(room.dominantSpeaker.identity);
                 });
-                room.on('participantDisconnected', event => {
-                    console.log('PARTICIPANT DISCONNECTING');
-                    console.log(event);
+                room.on('participantDisconnected', participant => {
+                    const newSpeakers = speakers.filter(speaker => speaker.identity !== participant.identity);
+                    const newListeners = listeners.filter(listener => listener.identity !== participant.identity);
+                    setSpeakers(newSpeakers);
+                    setListeners(newListeners);
                 });
 
                 // DISPLAY EXISTING LISTENERS
