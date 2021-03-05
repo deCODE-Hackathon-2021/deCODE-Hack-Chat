@@ -11,6 +11,7 @@ const activeUsers = new Set();
 
 io.on('connection', (socket) => {
   socket.emit('listSpeakers', Array.from(activeSpeakers));
+  socket.broadcast.emit('listSpeakers', Array.from(activeSpeakers));
   socket.on("addSpeaker", (data) => {
     console.log(data);
     console.log("Received add speaker from: " + socket.id)
