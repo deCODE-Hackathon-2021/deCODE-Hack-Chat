@@ -6,11 +6,11 @@ import { connect } from 'twilio-video';
 const RoomList = () => {
     const token = useState(null)
 
-    useEffect(async () => {
-        const response = await axios.get('/token');
-
-        console.log(response);
-    }, []);
+    // useEffect(async () => {
+    //     const response = await axios.get('/token');
+    //
+    //     console.log(response);
+    // }, []);
 
     if (!token) return null;
 
