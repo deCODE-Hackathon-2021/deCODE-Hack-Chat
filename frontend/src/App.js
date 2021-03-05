@@ -19,7 +19,7 @@ function App() {
     }
     initializeChat(store, {
       identity: `facebook_uid ${response.id}`,
-      name: `Facebook Name ${response.id}`
+      name: `${response.name}`
     });
   }
 
