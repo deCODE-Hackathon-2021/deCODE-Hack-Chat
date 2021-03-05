@@ -14,7 +14,7 @@ const MessageList = styled.div`
     width: 100%;
     flex-grow: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     justify-content: stretch;
     overflow-y: auto;
 `;
