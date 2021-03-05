@@ -9,6 +9,7 @@ const BoxWrapper = styled.div`
         border-radius: 4px;
         margin: 8px;
         padding: 16px;
+        position: relative;
     `}
 `;
 

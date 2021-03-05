@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {connect} from "react-redux";
 import {questionsAddVote, questionsRemoveVote} from "../../../redux/questions/actions";
+import AskQuestion from "./AskQuestion";
 
 const questionMapState = (state, props) => ({
     user: state.chat.members[props.question.userId],
@@ -77,7 +78,8 @@ const Question = connect(questionMapState, questionsMapDispatch)((props) => {
 
 const Wrapper = styled.div`
     overflow-y: auto;
-    max-height: calc(100% - 16px);
+    flex-grow: 1   ; 
+    margin-bottom: 16px;
 `
 
 const mapState = (state) => ({
@@ -91,9 +93,15 @@ const Questions = connect(mapState, mapDispatch)((props) => {
         questions
     } = props;
 
-    return <Wrapper>
-        {questions.map(q => <Question key={q.questionId} question={q}/>)}
-    </Wrapper>
+    return (
+        <div style={{display: 'flex', flexDirection: 'column', height: 'calc(100% - 24px)'}}>
+            <Wrapper>
+                {questions.map(q => <Question key={q.questionId} question={q}/>)}
+            </Wrapper>
+            <AskQuestion/>
+        </div>
+
+    )
 })
 
 export default Questions
