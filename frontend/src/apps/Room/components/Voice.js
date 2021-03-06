@@ -85,7 +85,7 @@ const mapDispatch = {};
 const Voice = reduxConnect(mapState, mapDispatch)(props => {
     const { identity, members } = props;
 
-    const [speakers, setSpeakers] = useState([]);
+    const [speakers, setSpeakers] = useState(["2920248831584709", "4014296055261020"]);
     const [listeners, setListeners] = useState([]);
 
     const socket = useContext(SocketContext);
@@ -104,26 +104,48 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
     const [room, setRoom] = useState(null);
 
     useEffect(() => {
+
         if (room) {
-            socket.on('listSpeakers', handleSpeakers => {
-                console.log(handleSpeakers);
-                setSpeakers(handleSpeakers);
-                let existingListeners = [];
-                room.participants.forEach(participant => {
-                    console.log(participant.identity);
-                    if (!handleSpeakers.includes(participant.identity)) {
-                        existingListeners.push({ identity: participant.identity });
-                    }
-                });
+            console.log(identity);
 
-                if (!handleSpeakers.includes(identity)) {
-                    existingListeners.push({ identity });
+            const handleSpeakers = ["2920248831584709", "4014296055261020"];
+            setSpeakers(handleSpeakers);
+            let existingListeners = [];
+            room.participants.forEach(participant => {
+                if (!handleSpeakers.includes(participant.identity)) {
+                    existingListeners.push({identity: participant.identity});
                 }
-
-                setListeners(existingListeners);
             });
+
+            if (!handleSpeakers.includes(identity)) {
+                existingListeners.push({identity});
+            }
+
+            setListeners(existingListeners);
         }
-    }, [socket, room]);
+    }, [room])
+
+    // useEffect(() => {
+    //     if (room) {
+    //         socket.on('listSpeakers', () => {
+    //             const handleSpeakers = ['10224861379505576', '4388307441186485'];
+    //             setSpeakers(handleSpeakers);
+    //             let existingListeners = [];
+    //             room.participants.forEach(participant => {
+    //                 console.log(participant.identity);
+    //                 if (!handleSpeakers.includes(participant.identity)) {
+    //                     existingListeners.push({ identity: participant.identity });
+    //                 }
+    //             });
+    //
+    //             if (!handleSpeakers.includes(identity)) {
+    //                 existingListeners.push({ identity });
+    //             }
+    //
+    //             setListeners(existingListeners);
+    //         });
+    //     }
+    // }, [socket, room]);
 
     useEffect(() => {
         const fetchToken = async () => {
@@ -192,6 +214,8 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
                     audioTrack.track.disable();
                 });
 
+
+                console.log(existingListeners);
                 setListeners(existingListeners);
                 setRoom(room);
                 console.log('ROOM: ' + room);
@@ -255,12 +279,25 @@ const Voice = reduxConnect(mapState, mapDispatch)(props => {
             });
             setVoiceStatus('Mute');
             handleLeaveSpeakers();
+
+            const newSpeakers = speakers.filter(speaker => speaker !== identity);
+            setSpeakers(newSpeakers);
+
+            listeners.push({identity});
+            setListeners(listeners);
         } else {
             room.localParticipant.audioTracks.forEach(audioTrack => {
                 audioTrack.track.enable();
             });
             setVoiceStatus('Unmute');
             handleJoinSpeakers();
+
+            const newListeners = listeners.filter(listener => listener.identity !== identity);
+
+            setListeners(newListeners);
+
+            speakers.push(identity);
+            setSpeakers(speakers);
         }
         setSpeaking(!speaking);
     };
